@@ -1,0 +1,21 @@
+// Criterion 11 & 12: Invalid declarations, empty enum, machine section order, E208.
+pub import "stdlib/text.tfd" as txt;
+
+enum EmptyEnum {}
+
+machine BadTrailingComma(delta: Int,) yields Int rejects Text {
+    state ok: Int = 0;
+    next ok = ok + delta;
+}
+
+machine ReorderedSections(delta: Int) yields Int rejects Text {
+    next state_cell = delta + 1;
+    state state_cell: Int = 0;
+}
+
+fn non_main_io() -> Int {
+    output "not allowed here" to stdout;
+    0
+}
+
+fn empty_body() -> Int {}

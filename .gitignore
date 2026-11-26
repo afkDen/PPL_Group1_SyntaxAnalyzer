@@ -1,0 +1,16 @@
+build/
+dist/
+demo-output/
+output/
+tmp/
+.uv-cache/
+.venv/
+*.exe
+*.o
+*.obj
+*.out
+*.pdb
+*.tmp
+__pycache__/
+*.pyc
+.pytest_cache/

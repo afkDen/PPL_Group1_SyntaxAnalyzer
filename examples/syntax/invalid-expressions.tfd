@@ -1,0 +1,13 @@
+// Criterion 11 & 12: Invalid expression syntax (E111, E112, E110).
+record Pair {
+    x: Int,
+    y: Int,
+}
+
+fn bad_expressions() -> Int {
+    let a = 1 < 2 < 3;
+    let b = 1 == 2 != 3;
+    let p = Pair(x: 1, 2);
+    let q = 2 ^ ;
+    a
+}

@@ -1,0 +1,32 @@
+// Criterion 10: Top-level and block declaration statements (import, record, enum, machine, fn, let).
+import "models/geometry.tfd" as geo;
+
+pub record Point {
+    x: Int,
+    y: Int,
+}
+
+pub enum Direction {
+    North,
+    East,
+    Custom(Int, Text),
+}
+
+pub machine Cursor(step_x: Int) yields Point rejects Text {
+    state pos_x: Int = 0;
+    next pos_x = pos_x + step_x;
+    guard next.pos_x >= 0 else "negative x rejected";
+    emit Point(x: next.pos_x, y: 0);
+}
+
+fn make_origin() -> Point {
+    let origin = Point(x: 0, y: 0);
+    origin
+}
+
+pub fn main() -> List[Text] {
+    let p: Point = make_origin();
+    let offset = geo::Offset(dx: 2, dy: 3);
+    let label: Text = geo::format_point(p.x + offset.dx, p.y + offset.dy);
+    [label]
+}

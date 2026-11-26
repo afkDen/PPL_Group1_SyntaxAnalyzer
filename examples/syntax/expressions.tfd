@@ -1,0 +1,32 @@
+// Criterion 7 (/3) & Expressions: Constant, variable-to-variable, and compound expressions.
+machine Register(delta: Int) yields Int rejects Unit {
+    state value: Int = 10;
+    state mirror: Int = 10;
+    next value = value + delta;
+    // Left value copy in machine transition
+    next mirror = next.value;
+    emit next.value;
+}
+
+pub fn main() -> List[Text] {
+    // 1. Constant value assigned to a binding
+    let literal_init: Int = 12;
+
+    // 2. Left value (existing identifier binding) assigned to a variable
+    let variable_copy: Int = literal_init;
+
+    // 3. Compound expression value assigned to a variable (all 7 arithmetic + boolean ops)
+    let arithmetic_expr: Int = -2 ^ 2 + (variable_copy * 3) div 2 - (7 % 4);
+    let real_div_expr: Float = 13 / 5;
+    let power_chain: Int = 2 ^ 3 ^ 2;
+    let bool_expr: Bool = !(false) && (literal_init <= variable_copy) || (arithmetic_expr > 0 && arithmetic_expr != 99);
+
+    let r0 = Register();
+    [
+        int_text(r0.value),
+        int_text(arithmetic_expr),
+        float_text(real_div_expr),
+        int_text(power_chain),
+        bool_text(bool_expr),
+    ]
+}

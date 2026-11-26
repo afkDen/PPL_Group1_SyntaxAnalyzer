@@ -1,0 +1,8 @@
+pub record Offset {
+    dx: Int,
+    dy: Int,
+}
+
+pub fn format_point(x: Int, y: Int) -> Text {
+    "(" ++ int_text(x) ++ ", " ++ int_text(y) ++ ")"
+}

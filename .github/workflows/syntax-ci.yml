@@ -1,0 +1,60 @@
+name: Syntax Analyzer CI
+
+on:
+  push:
+    branches: [main]
+    tags: ['syntax-submission-*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  ASAN_OPTIONS: detect_leaks=0:halt_on_error=1
+  UBSAN_OPTIONS: halt_on_error=1:print_stacktrace=1
+
+jobs:
+  windows-x64:
+    name: Windows x64 Build, Sanitizers, Demo & Packages
+    runs-on: windows-2025
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Install pinned LLVM-MinGW toolchain
+        shell: pwsh
+        run: |
+          $cc = ./scripts/windows-toolchain.ps1
+          "TF_CI_CC=$cc" >> $env:GITHUB_ENV
+
+      - name: Check environment
+        shell: pwsh
+        run: ./scripts/build.ps1 environment -Compiler $env:TF_CI_CC
+
+      - name: Build and run strict C17 suite
+        shell: pwsh
+        run: ./scripts/build.ps1 check -Compiler $env:TF_CI_CC
+
+      - name: Run ASan and UBSan suite
+        shell: pwsh
+        run: ./scripts/build.ps1 sanitize -Compiler $env:TF_CI_CC
+
+      - name: Run one-command coursework demo
+        shell: pwsh
+        run: ./scripts/run-syntax-demo.ps1 -Compiler $env:TF_CI_CC -IncludeInvalid -TraceTokens
+
+      - name: Build and verify fresh-extraction release ZIPs
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'syntax-dist'
+          ./scripts/package-syntax-analyzer.ps1 -Tag syntax-submission-2026-11-27 -Compiler $env:TF_CI_CC -OutDir $dir
+          ./scripts/verify-syntax-packages.ps1 -ReleaseDir (Join-Path $dir 'syntax-submission-2026-11-27') -Compiler $env:TF_CI_CC -TempRoot (Join-Path $env:RUNNER_TEMP 'fresh-verify')
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: syntax-release-packages
+          path: ${{ runner.temp }}/syntax-dist/syntax-submission-2026-11-27/*
+          if-no-files-found: error

@@ -1,0 +1,36 @@
+// Criterion 8 (/3): If-else statements, nested if-else, and match case statements.
+enum GradeBand {
+    Distinct,
+    Pass,
+    Review(Int),
+}
+
+fn classify_score(score: Int) -> GradeBand {
+    // Nested if-else (Ternfold conditionals always include an else block)
+    if score >= 90 {
+        GradeBand::Distinct
+    } else {
+        if score >= 75 {
+            GradeBand::Pass
+        } else {
+            GradeBand::Review(score)
+        }
+    }
+}
+
+pub fn main() -> List[Text] {
+    let simple: Text = if 5 > 3 { "yes" } else { "no" };
+    let band: GradeBand = classify_score(82);
+
+    // Case statement equivalents via `match`
+    let note: Text = match band {
+        GradeBand::Distinct => { "excellent" },
+        GradeBand::Pass => { "passed" },
+        GradeBand::Review(val) => { "score: " ++ int_text(val) },
+    };
+    let bool_case: Int = match true {
+        true => { 1 },
+        false => { 0 },
+    };
+    [simple, note, int_text(bool_case)]
+}

@@ -1,0 +1,9 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.h linguist-language=C
+*.inc linguist-language=C
+*.pdf binary
+*.png binary
+*.zip binary
+# Diagnostic goldens intentionally retain spaces for empty snippets/labels.
+tests/fixtures/diagnostics/*.txt whitespace=-blank-at-eol

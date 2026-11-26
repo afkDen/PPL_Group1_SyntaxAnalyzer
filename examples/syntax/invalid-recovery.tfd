@@ -1,0 +1,20 @@
+// Criterion 11 & 12: Multi-error panic-mode recovery and line-numbered diagnostics.
+// Expected exit code: 1 (multiple E110 errors, yet fn surviving_helper recovers cleanly).
+
+fn missing_rparen(a: Int -> Int {
+    a + 1
+}
+
+fn bad_bindings() -> Int {
+    let first = ;
+    let second = if true { 1 };
+    0
+}
+
+fn bad_call() -> Int {
+    let x = unknown_fn(10,
+}
+
+fn surviving_helper() -> Int {
+    42
+}

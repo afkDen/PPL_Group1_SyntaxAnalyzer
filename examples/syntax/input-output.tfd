@@ -1,0 +1,15 @@
+// Criterion 5 (/1) & Criterion 6 (/3): Input statement + three Output variants.
+pub fn main() -> List[Text] {
+    input username: Text from stdin;
+
+    // 1. Printing a string literal
+    output "Ternfold I/O Demonstration" to stdout;
+
+    // 2. Printing a variable
+    output username to stdout;
+
+    // 3. Printing a string concatenated with a variable
+    output "Greeting for: " ++ username to stdout;
+
+    [username]
+}

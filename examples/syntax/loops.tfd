@@ -1,0 +1,21 @@
+// Criterion 9 (/2): For loops and nested for loops.
+// Note: While and do-while loops are unsupported in Ternfold 0.2.
+fn squares() -> List[Int] {
+    for i in range(1, 5) {
+        i ^ 2
+    }
+}
+
+fn pairs() -> List[List[Int]] {
+    for row in range(0, 3) {
+        for col in range(0, 2) {
+            row * 10 + col
+        }
+    }
+}
+
+pub fn main() -> List[Text] {
+    let s = squares();
+    let p = pairs();
+    [int_text(len(s)), int_text(len(p))]
+}

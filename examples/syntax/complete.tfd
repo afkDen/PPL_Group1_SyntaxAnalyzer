@@ -1,0 +1,123 @@
+/* Ternfold C17 Syntax Analyzer - Complete Coursework Demonstration
+ * Covers Criterion 5 (input), Criterion 6 (output x3), Criterion 7 (let/next),
+ * Criterion 8 (if-else & match case), Criterion 9 (for & nested for loops),
+ * Criterion 10 (record, enum, machine, fn declarations), comments, and operators.
+ * Note: Ternfold expresses all conditionals with mandatory else branches (no
+ * bare single-branch if) and loops with pure `for` comprehensions (no while/do-while).
+ */
+
+// Unary helper function declaration (Criterion 10)
+fn square(x: Int) -> Int {
+    x ^ 2
+}
+
+// Polynomial expression precedence: ^ tighter than * which is tighter than + and -
+fn polynomial(x: Int) -> Int {
+    2 * (x ^ 2) + 3 * x - 1
+}
+
+// Record and enum declarations (Criterion 10)
+pub record SampleSummary {
+    visitor: Text,
+    scaled: Int,
+    tier: Text,
+}
+
+pub enum MeterFault {
+    NegativeDelta(Int),
+    ZeroNotAllowed,
+}
+
+// State machine declaration with state, next, guard, and emit sections (Criterion 10)
+pub machine Accumulator(delta: Int) yields Text rejects MeterFault {
+    state total: Int = 10;
+    state doubled: Int = 20;
+    next total = total + delta;
+    next doubled = next.total * 2;
+    guard delta >= 0 else MeterFault::NegativeDelta(delta);
+    guard delta != 0 else MeterFault::ZeroNotAllowed;
+    emit "old=" ++ int_text(total);
+    emit "next=" ++ int_text(next.total);
+}
+
+// Iterative single for-loop (Criterion 9; Ternfold uses for comprehensions)
+fn first_squares(limit: Int) -> List[Int] {
+    for n in range(0, limit) {
+        square(n)
+    }
+}
+
+// Iterative nested for-loops (Criterion 9)
+fn multiplication_grid(rows: Int, cols: Int) -> List[List[Int]] {
+    for r in range(0, rows) {
+        for c in range(0, cols) {
+            r * 10 + c
+        }
+    }
+}
+
+// Entry declaration demonstrating input, output (x3), bindings, conditions, loops, match
+pub fn main() -> List[Text] {
+    // Criterion 5: Input statement reading Text from stdin
+    input visitor: Text from stdin;
+
+    // Criterion 7: Constant value, variable-to-variable copy, and expression bindings
+    let constant_seed: Int = 10;
+    let lvalue_copy = constant_seed;
+    let computed_value: Int = (constant_seed * 2 + lvalue_copy) - 4;
+    let real_quotient: Float = 13 / 5;
+    let floor_quotient: Int = -7 div 3;
+    let mod_remainder: Int = 20 % 3;
+    let right_power: Int = 2 ^ 3 ^ 2;
+    let mark: Char = 'T';
+
+    // Criterion 8: Two-way conditional (`if ... else`) and nested `if ... else`
+    let parity: Text = if computed_value % 2 == 0 {
+        "even"
+    } else {
+        "odd"
+    };
+    let sign_tier: Text = if computed_value < 0 {
+        "negative"
+    } else {
+        if computed_value == 0 {
+            "zero"
+        } else {
+            "positive"
+        }
+    };
+
+    // Criterion 9: Single and nested loop calls
+    let sq_list = first_squares(3);
+    let grid = multiplication_grid(2, 3);
+    let ready: Bool = mark == 'T' && sq_list == [0, 1, 4] && grid == [[0, 1, 2], [10, 11, 12]] || false;
+
+    // Criterion 8: Case / pattern matching via `match`
+    let meter0 = Accumulator();
+    let transition_lines: List[Text] = match step(meter0, 5) {
+        Decision::Accept(published, emitted) => {
+            let summary = SampleSummary(visitor: visitor, scaled: published.doubled, tier: sign_tier);
+            emitted ++ [summary.tier, int_text(published.total)]
+        },
+        Decision::Reject(_, MeterFault::NegativeDelta(d)) => {
+            ["negative delta: " ++ int_text(d)]
+        },
+        Decision::Reject(_, MeterFault::ZeroNotAllowed) => {
+            ["zero delta rejected"]
+        },
+    };
+
+    // Criterion 6: Output statements (1) string literal, (2) variable, (3) string ++ variable
+    output "=== Ternfold Syntax Analyzer ===" to stdout;
+    output visitor to stdout;
+    output "Hello, " ++ visitor ++ " (" ++ parity ++ ")" to stdout;
+
+    [
+        float_text(real_quotient),
+        int_text(floor_quotient),
+        int_text(mod_remainder),
+        int_text(right_power),
+        int_text(polynomial(3)),
+        bool_text(ready),
+    ] ++ transition_lines
+}
