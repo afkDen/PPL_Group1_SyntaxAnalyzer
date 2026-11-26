@@ -15,6 +15,7 @@
 #else
 #include <errno.h>
 #include <limits.h>
+#include <sys/stat.h>
 #include <unistd.h>
 #endif
 
@@ -217,7 +218,15 @@ static char *absolute_path(TfAllocator a, const char *path) {
 }
 static char *resolved_path(TfAllocator a, const char *absolute) {
 #ifdef PATH_MAX
-    char *result = a.allocate(a.context, (size_t)PATH_MAX);
+    struct stat info;
+    size_t len = strlen(absolute);
+    char *result;
+    if (len == 0 || absolute[len - 1] == '/' || strcmp(absolute, ".") == 0 ||
+        (len >= 2 && strcmp(absolute + len - 2, "/.") == 0) ||
+        stat(absolute, &info) != 0 || !S_ISREG(info.st_mode)) {
+        return NULL;
+    }
+    result = a.allocate(a.context, (size_t)PATH_MAX);
     if (result != NULL && realpath(absolute, result) == NULL) {
         release(a, result); result = NULL;
     }
