@@ -4,7 +4,7 @@ Use this guide during live evaluation (`COSC 303: Programming Language Design`, 
 
 ## 1. Run the one-command pipeline
 
-From the extracted source root (after building with `./scripts/build.ps1 build`), or by double-clicking `Run-Demo.cmd` in the Windows x64 runnable bundle:
+From the extracted source root (after building with `./scripts/build.ps1 build`), or by running `Run-Windows.cmd` / `Run-Demo.cmd` on Windows or `./Run-Mac.command` on macOS from the All-In-One bundle:
 
 ```powershell
 ./scripts/run-syntax-demo.ps1 -IncludeInvalid -TraceTokens

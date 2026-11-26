@@ -2,11 +2,12 @@
 
 Quick setup and run guide for `COSC 303: Programming Language Design` (`BSCS 3-2`, Group 1).
 
-## Option A: Run the prebuilt Windows x64 bundle (no compiler needed)
+## Option A: Run a prebuilt bundle (no compiler needed)
 
-1. Download `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip` from the [GitHub releases page](https://github.com/afkDen/PPL_Group1_SyntaxAnalyzer/releases).
+1. Download `Ternfold_Syntax_Analyzer_All_In_One_2026-11-27.zip` (Windows x64, macOS ARM64, and macOS Intel) or `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip` (Windows x64) from the [GitHub releases page](https://github.com/afkDen/PPL_Group1_SyntaxAnalyzer/releases).
 2. Extract the full archive to a new directory.
-3. Run `Run-Demo.cmd` (or `./Run-Demo.cmd` in PowerShell).
+3. Run `Run-Windows.cmd` (or `Run-Demo.cmd`) on Windows, or `./Run-Mac.command` on macOS 15+.
+   Note: macOS binaries are unsigned/unnotarized; if Gatekeeper prompts on Finder double-click, run `./Run-Mac.command` in Terminal.
 4. Inspect the generated outputs inside `demo-output/`:
    - `demo-output/Symbol Table.txt` (classroom two-column table)
    - `demo-output/symbol-table.json` (lossless token stream parsed one token at a time)
@@ -27,13 +28,14 @@ Extract `Ternfold_Syntax_Analyzer_Source_2026-11-27.zip` (or clone this reposito
 ./scripts/run-syntax-demo.ps1 -IncludeInvalid -TraceTokens
 ```
 
-### POSIX (macOS / Linux)
+### POSIX (macOS 15+ / Linux Ubuntu 24.04)
 
-Note: full compiler targets using `Float` helpers require `x86_64` Clang without `-ffast-math`. On Windows x64 LLVM-MinGW Clang 23.1.4, all suites including sanitizers are verified.
+Note: the syntax analyzer and frontend/parser/AST/audit suites (`syntax-check` and `syntax-sanitize`) target C17 and run on macOS ARM64, macOS Intel, and Ubuntu Linux; full compiler `Float` execution helpers require x86_64 Clang without `-ffast-math`. On Windows x64 LLVM-MinGW Clang 23.1.4, all full-compiler suites including sanitizers are verified.
 
 ```sh
 sh scripts/build.sh environment
-sh scripts/build.sh build
+sh scripts/build.sh syntax-check
+sh scripts/build.sh syntax-sanitize
 sh scripts/run-syntax-demo.sh examples/syntax/complete.tfd demo-output
 ```
 

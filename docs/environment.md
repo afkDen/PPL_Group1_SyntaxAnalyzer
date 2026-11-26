@@ -31,13 +31,13 @@ Archive SHA256 fd5462b7f5d93b2ff981fcd3f9c7e427e47f3203c64ea91c27bcc444eebd74cd.
 Optional `./scripts/bootstrap.ps1` downloads this pinned official compiler only
 if needed; it is not a normal build prerequisite. Installed compiler use is offline.
 
-## POSIX
+## POSIX (macOS 15+ and Linux)
 
-`CC=clang sh scripts/build.sh environment` and `sh scripts/build.sh check`.
-The standalone lexical submission passed actual macOS15 ARM/Intel AppleClang17
-and Ubuntu24.04 GCC13.3 source builds and lexical tests. See lexical release
-verification records. Later full-compiler SourceManager/parser phases have not
-run on POSIX. Cross compilation alone does not verify target execution.
+`sh scripts/build.sh environment`, `sh scripts/build.sh syntax-check`, and
+`sh scripts/build.sh syntax-sanitize`. The standalone syntax analyzer targets
+portable ISO C17 and builds with Apple Clang (ARM64 and x86_64) and Ubuntu
+GCC/Clang (`syntax-check`, `syntax-sanitize`, and `run-syntax-demo.sh`). Full
+downstream `Float` execution helpers require x86_64 Clang without `-ffast-math`.
 
 ## Gates and limitations
 
@@ -56,11 +56,9 @@ This standalone syntax analyzer repository packages clean release archives via
 `./scripts/package-syntax-analyzer.ps1` and verifies fresh extractions outside
 the repository checkout via `./scripts/verify-syntax-packages.ps1`:
 
-- `Ternfold_Syntax_Analyzer_Source_2026-11-27.zip`: complete source tree,
-  headers, coursework examples, docs, and tests.
-- `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip`: statically linked
-  Windows x64 `ternfold.exe`, `Run-Demo.cmd`, MinGW/LLVM license notices,
-  bundled source tree, and checksums.
+- `Ternfold_Syntax_Analyzer_All_In_One_2026-11-27.zip`: cross-platform bundle containing prebuilt Windows x64 (`ternfold.exe`), macOS ARM64 (`ternfold`), and macOS Intel (`ternfold`), launchers (`Run-Windows.cmd`, `Run-Mac.command`), licenses, `source/`, `source-original.zip`, and `SHA256SUMS`.
+- `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip`: statically linked Windows x64 `ternfold.exe`, `Run-Demo.cmd`, `Run-Windows.cmd`, MinGW/LLVM license notices, bundled source tree, and checksums.
+- `Ternfold_Syntax_Analyzer_Source_2026-11-27.zip`: complete source tree, headers, coursework examples, docs, and tests.
 
 See [VERIFICATION.md](../VERIFICATION.md), [README.md](../README.md), and the
 companion repositories [PPL_Group1_LexicalAnalyzer](https://github.com/afkDen/PPL_Group1_LexicalAnalyzer)

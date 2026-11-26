@@ -1,5 +1,5 @@
 param(
-    [ValidateSet('environment','env','build','test','audit','check','sanitize','release')]
+    [ValidateSet('environment','env','build','test','syntax-check','syntax-sanitize','audit','check','sanitize','release')]
     [string]$Command = 'check',
     [string]$Compiler = $env:CC
 )

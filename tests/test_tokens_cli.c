@@ -748,11 +748,16 @@ static void test_parse_table_cli(const char *exe) {
 }
 
 int main(int argc, char **argv) {
-    CHECK(argc == 2); setup();
+    const bool syntax_only = argc >= 3 && strcmp(argv[2], "--syntax-only") == 0;
+    CHECK(argc >= 2 && argc <= 3); setup();
     test_goldens(argv[1]); test_payloads(argv[1]); test_errors_caps(argv[1]);
-    test_usage_host(argv[1]); test_examples(argv[1]); test_writer_no_allocations();
-    test_ast_cli(argv[1]); test_check_cli(argv[1]); test_plan_cli(argv[1]); test_core_cli(argv[1]); test_run_cli(argv[1]);
+    test_usage_host(argv[1]); test_writer_no_allocations();
+    test_ast_cli(argv[1]);
     test_parse_table_cli(argv[1]);
+    if (!syntax_only) {
+        test_examples(argv[1]);
+        test_check_cli(argv[1]); test_plan_cli(argv[1]); test_core_cli(argv[1]); test_run_cli(argv[1]);
+    }
     (void)printf("tokens CLI: %zu checks passed, %zu token invocations, %zu compiler examples\nfixtures: %s\n",
                  checks,cases,example_cases,root);
     return 0;

@@ -4,9 +4,10 @@ This standalone ISO C17 repository packages the Ternfold 0.2 syntax analyzer for
 
 ## Quick start
 
-### Option A: Run without compiling (Windows x64 Runnable ZIP)
+### Option A: Run without compiling (All-In-One or Windows x64 ZIP)
 
-Download `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip` from [GitHub Releases](https://github.com/afkDen/PPL_Group1_SyntaxAnalyzer/releases), extract the archive, and run `Run-Demo.cmd`. It executes the two-step lexical-to-syntax pipeline against `examples/syntax/complete.tfd` and `invalid-recovery.tfd`, writing all outputs into `demo-output/`.
+- **Cross-platform All-In-One (`Ternfold_Syntax_Analyzer_All_In_One_2026-11-27.zip`)**: Download from [GitHub Releases](https://github.com/afkDen/PPL_Group1_SyntaxAnalyzer/releases), extract the archive, and run `Run-Windows.cmd` on Windows x64 or `./Run-Mac.command` on macOS 15+ (Apple Silicon `arm64` or Intel `x86_64`). Both execute the two-step lexical-to-syntax pipeline against `examples/syntax/complete.tfd` and `invalid-recovery.tfd`, writing outputs into `demo-output/`.
+- **Windows x64 (`Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip`)**: Prebuilt Windows x64 executable (`Run-Demo.cmd` / `Run-Windows.cmd`) and exact bundled source.
 
 ### Option B: Compile from source
 
@@ -16,7 +17,15 @@ Download `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip` from [GitHub Rele
 ./scripts/run-syntax-demo.ps1 -IncludeInvalid -TraceTokens
 ```
 
-Run the full C17 verification and sanitizer suites:
+On macOS 15+ or Linux (`Clang` / `GCC`):
+
+```sh
+sh scripts/build.sh syntax-check
+sh scripts/build.sh syntax-sanitize
+sh scripts/run-syntax-demo.sh examples/syntax/complete.tfd demo-output
+```
+
+Run the full Windows compiler, runtime, backend, and sanitizer suites:
 
 ```powershell
 ./scripts/build.ps1 environment
@@ -58,5 +67,6 @@ This submission forms the Syntax Analyzer stage of the Ternfold coursework and c
 - [docs/README.md](docs/README.md): Grammar, parsing table, recursive descent, transition diagrams, error recovery, and row/invalid indices
 
 Release packages on [Releases](https://github.com/afkDen/PPL_Group1_SyntaxAnalyzer/releases):
+- `Ternfold_Syntax_Analyzer_All_In_One_2026-11-27.zip`: Prebuilt Windows x64, macOS Apple Silicon (`arm64`), and macOS Intel (`x86_64`) executables, launchers (`Run-Windows.cmd`, `Run-Mac.command`), MinGW/LLVM notices, bundled source snapshot (`source/` + `source-original.zip`), `SHA256SUMS`, and sidecars.
+- `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip`: Windows x64 executable, launchers (`Run-Demo.cmd`, `Run-Windows.cmd`), MinGW/LLVM notices, bundled source snapshot, and SHA-256 sidecar/manifest.
 - `Ternfold_Syntax_Analyzer_Source_2026-11-27.zip`: Source, headers, coursework examples, docs, scripts, tests, and SHA-256 sidecar/manifest.
-- `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip`: Prebuilt Windows x64 `ternfold.exe`, `Run-Demo.cmd`, MinGW/LLVM toolchain notices, bundled source snapshot, and SHA-256 sidecar/manifest.

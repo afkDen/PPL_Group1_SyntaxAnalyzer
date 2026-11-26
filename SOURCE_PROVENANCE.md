@@ -34,5 +34,5 @@ The recursive-descent parser, AST arena, AST dumper, handwritten scanner, and na
 - Added `include/ternfold/symbol_table.h` and `src/symbol_table.c`: lossless `ternfold-symbol-table` writer/atomic publisher and sequential one-token-at-a-time reader (`tf_symbol_table_next()`) with SHA-256 verification.
 - Updated `src/compiler_main.c`: added `tokens --classroom-table DIR --parser-input FILE`, `parse-table FILE`, and `ast --from-symbol-table FILE` with optional `--trace-tokens`.
 - Added `tests/test_symbol_table.c`, extended `tests/test_tokens_cli.c`, and updated `tools/tfdev.c`, `tools/audit.c`, and `scripts/course_audit.c` for standalone coursework checks.
-- Added `examples/syntax/*`, `scripts/run-syntax-demo.ps1`, `scripts/run-syntax-demo.sh`, packaging scripts, CI workflows, and `docs/syntax-analyzer/*`.
+- Added `examples/syntax/*`, `scripts/run-syntax-demo.ps1`, `scripts/run-syntax-demo.sh`, `scripts/Run-Windows.cmd`, `scripts/Run-Mac.command`, cross-platform All-In-One packaging scripts (`package-syntax-analyzer.ps1`, `package-mac-payload.sh`, `assemble-all-in-one.sh`, `verify-*-*`), CI workflows, and `docs/syntax-analyzer/*`.
 - Removed internal development logs, historical Python host (`src/ternfold/`), and proposal PDFs from the standalone submission tree while keeping compiler documentation links self-contained.

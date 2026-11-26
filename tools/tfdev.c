@@ -411,7 +411,8 @@ static int native_trace_fault(const char *cc,int sanitize,int release,bool langu
 int main(int argc, char **argv) {
     const char *cc = getenv("TF_CC");
     const char *mode = argc > 1 ? argv[1] : "check";
-    int status, sanitize = strcmp(mode, "sanitize") == 0;
+    const bool syntax_only = strcmp(mode, "syntax-check") == 0 || strcmp(mode, "syntax-sanitize") == 0;
+    int status, sanitize = strcmp(mode, "sanitize") == 0 || strcmp(mode, "syntax-sanitize") == 0;
     int release = strcmp(mode, "release") == 0;
     char lexer[96], unit[96], audit[96], integration[96], source_manager[96], diagnostics[96], diagnostic_json[96];
     char compiler[96], tokens_cli[96];
@@ -442,8 +443,8 @@ int main(int argc, char **argv) {
         if (status) return status;
         return audit_run("build/audit" EXE);
     }
-    if (strcmp(mode, "build") && strcmp(mode, "test") && strcmp(mode, "check") && !sanitize && !release) {
-        fprintf(stderr, "tfdev: expected environment|build|test|audit|check|sanitize|release\n");
+    if (strcmp(mode, "build") && strcmp(mode, "test") && strcmp(mode, "check") && !sanitize && !release && !syntax_only) {
+        fprintf(stderr, "tfdev: expected environment|build|test|audit|check|sanitize|release|syntax-check|syntax-sanitize\n");
         return 2;
     }
     if (sanitize && !standalone) {
@@ -511,7 +512,7 @@ int main(int argc, char **argv) {
           { const char *args[] = {diagnostic_json, NULL}; status = run(args); if (status) return status; }
           status = compile(cc, tokens_cli, "tests/test_tokens_cli.c", sanitize, 1, release);
           if (status) return status;
-          { const char *args[] = {tokens_cli, compiler, NULL}; status = run(args); if (status) return status; }
+          { const char *args[] = {tokens_cli, compiler, syntax_only ? "--syntax-only" : NULL, NULL}; status = run(args); if (status) return status; }
           status = compile(cc, parser, "tests/test_parser.c", sanitize, 1, release);
           if (status) return status;
           { const char *args[] = {parser, NULL}; status = run(args); if (status) return status; }
@@ -537,6 +538,15 @@ int main(int argc, char **argv) {
           status = compile(cc, resolution, "tests/test_resolution.c", sanitize, 1, release);
           if (status) return status;
           { const char *args[] = {resolution, NULL}; status = run(args); if (status) return status; }
+          {
+              const char *binary=sanitize ? "build/course-audit-san" EXE : "build/course-audit" EXE;
+              const char *const args[]={binary,NULL};
+              status=compile(cc,binary,"scripts/course_audit.c",sanitize,0,release);
+              if (status) return status;
+              status=run_process(args,30000);
+              if (status) return status;
+          }
+          if (!syntax_only) {
           {
               const char *const type_gates[] = {"pattern_coverage", "numeric", "checked_numeric", "literal_value",
                                                 "type_store", "typed_signatures", "typed_patterns",
@@ -640,14 +650,6 @@ int main(int argc, char **argv) {
               if (status) return status;
           }
           {
-              const char *binary=sanitize ? "build/course-audit-san" EXE : "build/course-audit" EXE;
-              const char *const args[]={binary,NULL};
-              status=compile(cc,binary,"scripts/course_audit.c",sanitize,0,release);
-              if (status) return status;
-              status=run_process(args,30000);
-              if (status) return status;
-          }
-          {
               const char *binary=sanitize ? "build/test-execution-trace-san" EXE : "build/test-execution-trace" EXE;
               const char *const args[]={binary,NULL};
               status=compile(cc,binary,"tests/test_execution_trace.c",sanitize,0,release);
@@ -663,9 +665,10 @@ int main(int argc, char **argv) {
               status=run_process(args,30000);
               if (status) return status;
           }
+        }
       }
     }
-    if (!strcmp(mode, "check") || release || sanitize) {
+    if (!strcmp(mode, "check") || release || sanitize || syntax_only) {
         status = compile(cc, audit, "tools/audit.c", sanitize, 0, release);
         if (status) return status;
         return audit_run(audit);

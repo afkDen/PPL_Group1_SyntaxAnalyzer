@@ -4,10 +4,11 @@ This document records verified build, test, sanitizer, demonstration, and archiv
 
 ## Verified environment and compiler flags
 
-- **Host OS**: Windows x64 (`x86_64-w64-windows-gnu`)
-- **Compiler**: LLVM-MinGW Clang `23.1.4` (`-std=c17 -Wall -Wextra -Werror -pedantic -Wconversion -Wshadow`)
-- **Sanitizers**: `-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer` (with Windows MinGW runtime settings `ASAN_OPTIONS=detect_leaks=0:halt_on_error=1` and `UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1`; LeakSanitizer leak detection is unsupported on this Windows target)
-- **Untested platforms**: Linux and macOS runs were not executed locally in this environment and are therefore not claimed as verified here.
+- **Windows x64 (Full Compiler + Syntax)**: `windows-2025`, LLVM-MinGW Clang `23.1.4` (`-std=c17 -Wall -Wextra -Werror -pedantic -Wconversion -Wshadow`)
+- **macOS 15 ARM64 & Intel x64 (Syntax Analyzer + Mach-O Executables)**: `macos-15` (`arm64`) and `macos-15-intel` (`x86_64`), Apple Clang, `MACOSX_DEPLOYMENT_TARGET=15.0` (`syntax-check`, `syntax-sanitize`, and All-In-One native verification)
+- **Linux Ubuntu 24.04 x64 (Syntax Analyzer Source)**: `ubuntu-24.04` (`cc` / GCC, `syntax-check`, `syntax-sanitize`, and `run-syntax-demo.sh`)
+- **Sanitizers**: `-fsanitize=address,undefined -fno-sanitize-recover=all -fno-omit-frame-pointer` (with `ASAN_OPTIONS=detect_leaks=0:halt_on_error=1` and `UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1`; LeakSanitizer leak detection is disabled on Windows MinGW / CI runners)
+- **Scope note**: Downstream full-compiler `Float` execution helpers require x86_64 Clang (`windows-2025` is verified end-to-end across all M01-M17 suites); POSIX CI runs `syntax-check` and `syntax-sanitize` covering the complete lexical, Symbol Table, parser, AST, diagnostics, resolution, and audit suites plus native Mach-O All-In-One tests.
 
 ## Reproduction commands
 
@@ -50,8 +51,9 @@ This document records verified build, test, sanitizer, demonstration, and archiv
 
 ## Distribution packaging and fresh extraction verification
 
-Release packages built by `scripts/package-syntax-analyzer.ps1` and verified by `scripts/verify-syntax-packages.ps1` in fresh temporary directories outside the repository checkout:
-- `Ternfold_Syntax_Analyzer_Source_2026-11-27.zip`: SHA-256 verified against `.sha256`, extracted to a new directory, passes `environment`, `check`, `sanitize`, and `run-syntax-demo.ps1 -IncludeInvalid -TraceTokens`.
+Release packages built and verified in GitHub Actions (`windows-2025`, `macos-15`, `macos-15-intel`, and `ubuntu-24.04`) and locally outside the repository checkout:
+- `Ternfold_Syntax_Analyzer_All_In_One_2026-11-27.zip`: assembled on `macos-15` combining verified `windows-x64`, `macos-arm64`, and `macos-x64` native binaries with identical `source/` trees, verified on fresh extractions across Windows x64, Apple Silicon macOS 15, and Intel macOS 15 using `Run-Windows.cmd --batch`, `Run-Mac.command --batch`, `SHA256SUMS` / `shasum`, `otool -L`, `llvm-readobj`, filename-with-spaces, and `.tfd`-removal non-bypass parsing.
+- `Ternfold_Syntax_Analyzer_Source_2026-11-27.zip`: SHA-256 verified against `.sha256`, extracted to a new directory, passes `environment`, `check`, `sanitize`, and `run-syntax-demo.ps1 -IncludeInvalid -TraceTokens` on Windows, plus `syntax-check` and `syntax-sanitize` on macOS and Ubuntu.
 - `Ternfold_Syntax_Analyzer_Windows_x64_2026-11-27.zip`: every file verified against `SHA256SUMS`, `source-original.zip` matches the source archive hash, statically linked `bin/windows-x64/ternfold.exe` verified via `llvm-readobj` for UCRT/Windows-system-only DLL imports, executes `Run-Demo.cmd --batch` and `.tfd`-deletion non-bypass proof under a clean `PATH` containing only `System32` and `Windows`.
 
 Exact SHA-256 digests and file manifests accompany the GitHub Release assets in `*.sha256` and `*.manifest.json`.

@@ -170,6 +170,8 @@ if not "%~1"=="--batch" if not "%~2"=="--batch" pause
 exit /b %rc%
 "@
     [IO.File]::WriteAllText((Join-Path $stage 'Run-Demo.cmd'), $runDemoCmd.Replace("`r`n", "`n").Replace("`n", "`r`n"), $utf8NoBom)
+    $runWinSrc = [IO.File]::ReadAllText((Join-Path $projectRoot 'scripts/Run-Windows.cmd'))
+    [IO.File]::WriteAllText((Join-Path $stage 'Run-Windows.cmd'), $runWinSrc.Replace("`r`n", "`n").Replace("`n", "`r`n"), $utf8NoBom)
 
     $bundleReadme = @"
 # Ternfold C17 Syntax Analyzer - Windows x64 Runnable Bundle
