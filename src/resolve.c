@@ -581,7 +581,8 @@ static TfScopeId new_scope(TfResolution *r, TfModuleId module, TfScopeId parent_
     TfResolvedScope *s = allocate(r,1,sizeof(*s));
     if (s == NULL) return (TfScopeId){0};
     s->id = (TfScopeId){r,r->scopes.count+1}; s->parent = parent_id; s->module = module; s->node = n; s->closure = closure;
-    if (!append(r,&r->scopes,s)) return (TfScopeId){0}; return s->id;
+    if (!append(r,&r->scopes,s)) return (TfScopeId){0};
+    return s->id;
 }
 static TfResolvedSymbol *find_symbol(TfResolution *r, TfScopeId scope, TfAstText name) {
     size_t i;

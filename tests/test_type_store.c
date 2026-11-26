@@ -1,5 +1,8 @@
 #ifndef _WIN32
 #define _XOPEN_SOURCE 700
+#ifdef __APPLE__
+#define _DARWIN_C_SOURCE
+#endif
 #endif
 #include "ternfold/types.h"
 

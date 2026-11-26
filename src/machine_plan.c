@@ -81,9 +81,9 @@ static TfSymbolId binding(const TfResolution *r, const BindingIndex *index, TfNo
 }
 static bool diagnose(TfMachineProgram *p, const char *code, const char *message,
                      TfSpan primary, const TfSpan *related) {
-    TfDiagnosticLabel labels[2] = {{primary,true,{0}},{0}};
+    TfDiagnosticLabel labels[2] = {0};
     TfDiagnosticRecord record = {0};
-    labels[0].message = text(message);
+    labels[0] = (TfDiagnosticLabel){primary,true,text(message)};
     if (related != NULL) labels[1] = (TfDiagnosticLabel){*related,false,text("state cell declared here")};
     record.code = code; record.severity = TF_DIAG_ERROR; record.message = text(message);
     record.labels = labels; record.label_count = related != NULL ? 2u : 1u;
